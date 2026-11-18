@@ -16,6 +16,7 @@ This frontend is a responsive demonstration and integration surface for ReplyMat
 
 | Route | Purpose |
 | --- | --- |
+| `/` | Public product home page with feature overview and portal entry points |
 | `/login` | Owner login form and validation |
 | `/dashboard` | Operational overview and charts |
 | `/inbox` | AI approval inbox |

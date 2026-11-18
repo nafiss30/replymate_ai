@@ -8,7 +8,7 @@ The `feature/nafis-frontend-ai` branch contains the complete responsive frontend
 
 ### Included pages
 
-- Owner login
+- Public home page and owner login portal
 - Dashboard overview with Recharts visualisations
 - AI approval inbox and conversation details
 - Customer chat simulator
@@ -35,7 +35,7 @@ copy .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The root route redirects to `/dashboard`; `/login` contains the demonstration login form.
+Open [http://localhost:3000](http://localhost:3000) for the public home page. The owner portal is available at `/login`, and successful demo login opens `/dashboard`.
 
 On macOS or Linux, use `cp .env.example .env.local` instead of `copy`.
 
