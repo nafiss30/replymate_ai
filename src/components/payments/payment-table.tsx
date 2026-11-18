@@ -1,0 +1,20 @@
+"use client";
+
+import { useState } from "react";
+import { Check, CheckCircle2, Copy, Search, XCircle } from "lucide-react";
+import { payments as seedPayments } from "@/data/mock-data";
+import type { PaymentStatus } from "@/types";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/field";
+import { formatCurrency } from "@/lib/utils";
+
+export function PaymentTable() {
+  const [items, setItems] = useState(seedPayments);
+  const [query, setQuery] = useState("");
+  const [notice, setNotice] = useState("");
+  const change = (id: string, status: PaymentStatus) => { setItems(current => current.map(item => item.id === id ? {...item,status}:item)); setNotice(`${id} marked ${status.toLowerCase()} in demo mode.`); window.setTimeout(() => setNotice(""), 2200); };
+  const filtered = items.filter(item => `${item.id} ${item.orderId} ${item.customer} ${item.transactionId || ""}`.toLowerCase().includes(query.toLowerCase()));
+  return <>{notice ? <div className="mb-4 flex items-center gap-2 rounded-xl border border-[#FDBA74] bg-[#FFEDD5] px-4 py-3 text-sm font-semibold text-[#9A3412]"><Check size={16} />{notice}</div> : null}<div className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[{label:"Pending review",value:items.filter(i=>i.status==="Pending").length},{label:"Verified",value:items.filter(i=>i.status==="Verified").length},{label:"Cash on delivery",value:items.filter(i=>i.status==="COD").length},{label:"Rejected",value:items.filter(i=>i.status==="Rejected").length}].map(stat => <Card key={stat.label} className="p-5"><p className="text-xs font-bold uppercase tracking-wider text-[#78716C]">{stat.label}</p><p className="mt-3 text-3xl font-black">{stat.value}</p></Card>)}</div><Card className="mb-5 p-3 sm:p-4"><div className="relative"><Search size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A8A29E]" /><Input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search payment, order, customer, or transaction ID…" className="pl-10" /></div></Card><Card className="overflow-x-auto"><table className="w-full min-w-[900px] text-left"><thead className="bg-[#FFF7ED] text-[10px] uppercase tracking-wider text-[#78716C]"><tr><th className="px-6 py-3">Payment</th><th className="px-4 py-3">Order / customer</th><th className="px-4 py-3">Method</th><th className="px-4 py-3">Transaction ID</th><th className="px-4 py-3">Amount</th><th className="px-4 py-3">Status</th><th className="px-6 py-3 text-right">Verification</th></tr></thead><tbody className="divide-y divide-[#FFEDD5]">{filtered.map(payment => <tr key={payment.id} className="text-sm hover:bg-[#FFF7ED]"><td className="px-6 py-4"><p className="font-black">{payment.id}</p><p className="mt-1 text-[10px] text-[#A8A29E]">{payment.submittedAt}</p></td><td className="px-4 py-4"><p className="font-bold">{payment.orderId}</p><p className="mt-1 text-xs text-[#78716C]">{payment.customer}</p></td><td className="px-4 py-4 font-semibold">{payment.method}</td><td className="px-4 py-4"><span className="inline-flex items-center gap-1 font-mono text-xs">{payment.transactionId || "—"}{payment.transactionId ? <Copy size={12} /> : null}</span></td><td className="px-4 py-4 font-black">{formatCurrency(payment.amount)}</td><td className="px-4 py-4"><Badge tone={payment.status === "Rejected" ? "danger" : payment.status === "Verified" ? "orange" : payment.status === "COD" ? "dark" : "cream"}>{payment.status}</Badge></td><td className="px-6 py-4"><div className="flex justify-end gap-2">{payment.status === "Pending" ? <><Button size="sm" onClick={() => change(payment.id,"Verified")}><CheckCircle2 size={14} />Verify</Button><Button size="sm" variant="danger" onClick={() => change(payment.id,"Rejected")}><XCircle size={14} />Reject</Button></> : <span className="text-xs font-semibold text-[#78716C]">No action required</span>}</div></td></tr>)}</tbody></table></Card></>;
+}
